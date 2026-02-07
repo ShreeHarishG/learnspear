@@ -4,12 +4,36 @@ import { useState, useEffect } from 'react';
 import odooAPI from '@/lib/odoo-api';
 import Link from 'next/link';
 
-export default function Dashboard() {
-  const [stats, setStats] = useState(null);
-  const [subscriptions, setSubscriptions] = useState([]);
-  const [invoices, setInvoices] = useState([]);
-  const [loading, setLoading] = useState(true);
+interface Stats {
+  active_subscriptions: number;
+  total_subscriptions: number;
+  paid_invoices: number;
+  total_revenue: number;
+}
 
+interface Subscription {
+  id: number;
+  name: string;
+  partner_id: [number, string];
+  plan_id: [number, string];
+  state: string;
+  amount_total: number;
+}
+
+interface Invoice {
+  id: number;
+  name: string;
+  partner_id: [number, string];
+  invoice_date: string;
+  payment_state: string;
+  amount_total: number;
+}
+
+export default function Dashboard() {
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     loadData();
   }, []);
@@ -76,7 +100,7 @@ export default function Dashboard() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="text-sm text-gray-600">Active Subscriptions</div>
             <div className="text-3xl font-bold text-blue-600 mt-2">
-              {stats?.active_subscriptions || 0}
+              {stats?.active_subscriptions ?? 0}
             </div>
           </div>
 
