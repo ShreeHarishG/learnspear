@@ -11,10 +11,15 @@ export default function UserSubscriptionsPage() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        odooAPI.getSubscriptions()
-            .then((res) => setList(res.data ?? []))
-            .catch((e) => setError(e instanceof Error ? e.message : "Failed to load"))
-            .finally(() => setLoading(false));
+        // odooAPI.getSubscriptions()
+        //     .then((res) => setList(res.data ?? []))
+        //     .catch((e) => setError(e instanceof Error ? e.message : "Failed to load"))
+        //     .finally(() => setLoading(false));
+
+        setList([
+            { id: 101, name: "SUB/2026/001", partner_id: [1, "Vishwa Corp"], plan_id: [1, "Premium SaaS"], state: "active", amount_total: 1200 },
+        ]);
+        setLoading(false);
     }, []);
 
     if (loading) return <div className="p-8 text-text-muted">Loading subscriptions...</div>;
