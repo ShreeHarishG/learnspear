@@ -11,10 +11,18 @@ export default function InvoicesPage() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        odooAPI.getInvoices()
-            .then((res) => setList(res.data ?? []))
-            .catch((e) => setError(e instanceof Error ? e.message : "Failed to load"))
-            .finally(() => setLoading(false));
+        // odooAPI.getInvoices()
+        //     .then((res) => setList(res.data ?? []))
+        //     .catch((e) => setError(e instanceof Error ? e.message : "Failed to load"))
+        //     .finally(() => setLoading(false));
+
+        // Mock Data
+        setList([
+            { id: 201, name: "INV/2026/001", partner_id: [1, "Vishwa Corp"], invoice_date: "2026-02-01", payment_state: "paid", amount_total: 1200 },
+            { id: 202, name: "INV/2026/002", partner_id: [2, "Tech Solutions"], invoice_date: "2026-02-05", payment_state: "not_paid", amount_total: 800 },
+            { id: 203, name: "INV/2026/003", partner_id: [1, "Vishwa Corp"], invoice_date: "2026-02-06", payment_state: "paid", amount_total: 15 },
+        ]);
+        setLoading(false);
     }, []);
 
     if (loading) return <div className="p-8 text-text-muted">Loading invoices...</div>;

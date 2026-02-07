@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { KPICard } from "@/components/KPICard";
+import { Activity, DollarSign, FileText, Users } from "lucide-react";
 import odooAPI from "@/lib/odoo-api";
 
 export default function AdminDashboardPage() {
@@ -19,14 +20,32 @@ export default function AdminDashboardPage() {
     useEffect(() => {
         async function load() {
             try {
-                const [statsRes, subsRes, invRes] = await Promise.all([
-                    odooAPI.getStats(),
-                    odooAPI.getSubscriptions(),
-                    odooAPI.getInvoices(),
+                // const [statsRes, subsRes, invRes] = await Promise.all([
+                //     odooAPI.getStats(),
+                //     odooAPI.getSubscriptions(),
+                //     odooAPI.getInvoices(),
+                // ]);
+                // setStats(statsRes.data ?? null);
+                // setSubscriptions(subsRes.data ?? []);
+                // setInvoices(invRes.data ?? []);
+
+                // Mock Data
+                setStats({
+                    active_subscriptions: 142,
+                    total_subscriptions: 156,
+                    paid_invoices: 128,
+                    total_revenue: 452000,
+                });
+                setSubscriptions([
+                    { id: 101, name: "SUB/2026/001", partner_id: [1, "Vishwa Corp"], plan_id: [1, "Premium SaaS"], state: "active", amount_total: 1200 },
+                    { id: 102, name: "SUB/2026/002", partner_id: [2, "Tech Solutions"], plan_id: [2, "Basic Plan"], state: "pending", amount_total: 800 },
+                    { id: 103, name: "SUB/2026/003", partner_id: [3, "Global Innov"], plan_id: [1, "Premium SaaS"], state: "active", amount_total: 1200 },
                 ]);
-                setStats(statsRes.data ?? null);
-                setSubscriptions(subsRes.data ?? []);
-                setInvoices(invRes.data ?? []);
+                setInvoices([
+                    { id: 201, name: "INV/2026/001", partner_id: [1, "Vishwa Corp"], invoice_date: "2026-02-01", payment_state: "paid", amount_total: 1200 },
+                    { id: 202, name: "INV/2026/002", partner_id: [2, "Tech Solutions"], invoice_date: "2026-02-05", payment_state: "not_paid", amount_total: 800 },
+                ]);
+
             } catch (e) {
                 setError(e instanceof Error ? e.message : "Failed to load data");
             } finally {
@@ -60,26 +79,40 @@ export default function AdminDashboardPage() {
                 <p className="text-text-muted mt-1">System Overview & Key Metrics (Odoo)</p>
             </header>
 
+            {/* // ... existing code ... */}
+
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-10">
                 <KPICard
                     title="Active Subscriptions"
-                    value={stats?.active_subscriptions ?? 0}
-                    icon="📋"
+                    value={String(stats?.active_subscriptions ?? 0)}
+                    icon={Activity}
+                    change="+12%"
+                    changeType="positive"
+                    color="bg-blue-100 text-blue-600"
                 />
                 <KPICard
                     title="Total Revenue"
                     value={`₹${(stats?.total_revenue ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`}
-                    icon="💰"
+                    icon={DollarSign}
+                    change="+8.2%"
+                    changeType="positive"
+                    color="bg-green-100 text-green-600"
                 />
                 <KPICard
                     title="Pending Invoices"
-                    value={pendingInvoices}
-                    icon="🧾"
+                    value={String(pendingInvoices)}
+                    icon={FileText}
+                    change="Needs Attention"
+                    changeType="negative"
+                    color="bg-yellow-100 text-yellow-600"
                 />
                 <KPICard
                     title="Paid Invoices"
-                    value={stats?.paid_invoices ?? 0}
-                    icon="👥"
+                    value={String(stats?.paid_invoices ?? 0)}
+                    icon={Users}
+                    change="+5"
+                    changeType="neutral"
+                    color="bg-purple-100 text-purple-600"
                 />
             </div>
 

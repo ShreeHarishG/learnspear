@@ -9,10 +9,17 @@ export default function AdminProductsPage() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        odooAPI.getProducts()
-            .then((res) => setList(Array.isArray(res.data) ? res.data : []))
-            .catch((e) => setError(e instanceof Error ? e.message : "Failed to load"))
-            .finally(() => setLoading(false));
+        // odooAPI.getProducts()
+        //     .then((res) => setList(Array.isArray(res.data) ? res.data : []))
+        //     .catch((e) => setError(e instanceof Error ? e.message : "Failed to load"))
+        //     .finally(() => setLoading(false));
+
+        setList([
+            { id: 1, name: "Premium SaaS Subscription", list_price: 1200, type: "service" },
+            { id: 2, name: "Basic Plan", list_price: 800, type: "service" },
+            { id: 3, name: "Consulting Hours", list_price: 5000, type: "service" },
+        ]);
+        setLoading(false);
     }, []);
 
     if (loading) return <div className="p-8 text-text-muted">Loading products...</div>;

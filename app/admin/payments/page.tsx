@@ -11,13 +11,19 @@ export default function AdminPaymentsPage() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        odooAPI.getInvoices()
-            .then((res) => {
-                const all: Inv[] = res.data ?? [];
-                setList(all.filter((i) => i.payment_state === "paid" || i.payment_state === "partial"));
-            })
-            .catch((e) => setError(e instanceof Error ? e.message : "Failed to load"))
-            .finally(() => setLoading(false));
+        // odooAPI.getInvoices()
+        //     .then((res) => {
+        //         const all: Inv[] = res.data ?? [];
+        //         setList(all.filter((i) => i.payment_state === "paid" || i.payment_state === "partial"));
+        //     })
+        //     .catch((e) => setError(e instanceof Error ? e.message : "Failed to load"))
+        //     .finally(() => setLoading(false));
+
+        setList([
+            { id: 201, name: "INV/2026/001", partner_id: [1, "Vishwa Corp"], invoice_date: "2026-02-01", payment_state: "paid", amount_total: 1200 },
+            { id: 204, name: "INV/2026/004", partner_id: [4, "Alpha Inc"], invoice_date: "2026-02-07", payment_state: "paid", amount_total: 450 },
+        ]);
+        setLoading(false);
     }, []);
 
     if (loading) return <div className="p-8 text-text-muted">Loading payments...</div>;

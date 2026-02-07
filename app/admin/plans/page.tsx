@@ -9,10 +9,16 @@ export default function AdminPlansPage() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        odooAPI.getPlans()
-            .then((res) => setList(Array.isArray(res.data) ? res.data : []))
-            .catch((e) => setError(e instanceof Error ? e.message : "Failed to load"))
-            .finally(() => setLoading(false));
+        // odooAPI.getPlans()
+        //     .then((res) => setList(Array.isArray(res.data) ? res.data : []))
+        //     .catch((e) => setError(e instanceof Error ? e.message : "Failed to load"))
+        //     .finally(() => setLoading(false));
+
+        setList([
+            { id: 1, name: "Monthly", billing_period: "month", price: 100 },
+            { id: 2, name: "Yearly", billing_period: "year", price: 1000 },
+        ]);
+        setLoading(false);
     }, []);
 
     if (loading) return <div className="p-8 text-text-muted">Loading plans...</div>;
