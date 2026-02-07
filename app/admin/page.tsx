@@ -61,7 +61,7 @@ export default function AdminDashboardPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-2">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600"></div>
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-slate-800"></div>
             <p className="text-sm font-medium text-slate-500">Loading ERP Dashboard...</p>
         </div>
       </div>
@@ -69,7 +69,7 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 p-6 font-sans text-slate-900">
+    <div className="min-h-screen bg-white p-6 font-sans text-slate-900">
       {/* Header */}
       <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -85,7 +85,7 @@ export default function AdminDashboardPage() {
                 <Clock className="mr-2 h-4 w-4 text-slate-400" />
                 Last 30 Days
              </button>
-             <button className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+             <button className="inline-flex items-center justify-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
                 <Plus className="mr-2 h-4 w-4" />
                 New Entry
              </button>
@@ -123,11 +123,11 @@ export default function AdminDashboardPage() {
                         ₹{mrr.toLocaleString("en-IN")}
                     </h3>
                 </div>
-                <div className="rounded-lg bg-blue-50 p-2 text-blue-600">
+                <div className="rounded-lg bg-slate-50 p-2 text-slate-600">
                     <Activity className="h-5 w-5" />
                 </div>
             </div>
-            <div className="mt-4 flex items-center text-xs text-blue-600">
+            <div className="mt-4 flex items-center text-xs text-slate-600">
                  <span className="font-medium">Active</span>
                  <span className="ml-1 text-slate-400"> recurring revenue</span>
             </div>
@@ -198,13 +198,13 @@ export default function AdminDashboardPage() {
             <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
                 <div className="border-b border-slate-200 px-6 py-4 flex items-center justify-between">
                     <h2 className="font-semibold text-slate-900">All Invoices</h2>
-                    <Link href="/admin/invoices" className="text-xs font-medium text-blue-600 hover:text-blue-700 flex items-center">
+                    <Link href="/admin/invoices" className="text-xs font-medium text-slate-600 hover:text-slate-900 flex items-center">
                         View All <ArrowRight className="ml-1 w-3 h-3" />
                     </Link>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-50 text-slate-500">
+                        <thead className="bg-white text-slate-500 border-b border-slate-200">
                             <tr>
                                 <th className="px-6 py-3 font-medium">Invoice</th>
                                 <th className="px-6 py-3 font-medium">Customer</th>
@@ -243,13 +243,13 @@ export default function AdminDashboardPage() {
             <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
                 <div className="border-b border-slate-200 px-6 py-4 flex items-center justify-between">
                     <h2 className="font-semibold text-slate-900">Active Subscriptions</h2>
-                    <Link href="/admin/subscriptions" className="text-xs font-medium text-blue-600 hover:text-blue-700 flex items-center">
+                    <Link href="/admin/subscriptions" className="text-xs font-medium text-slate-600 hover:text-slate-900 flex items-center">
                         View All <ArrowRight className="ml-1 w-3 h-3" />
                     </Link>
                 </div>
                  <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-50 text-slate-500">
+                        <thead className="bg-white text-slate-500 border-b border-slate-200">
                             <tr>
                                 <th className="px-6 py-3 font-medium">Subscription</th>
                                 <th className="px-6 py-3 font-medium">Customer</th>
@@ -270,7 +270,7 @@ export default function AdminDashboardPage() {
                                         <td className="px-6 py-3 font-medium text-slate-900">₹{Number(sub.amount_total).toLocaleString("en-IN")}</td>
                                         <td className="px-6 py-3">
                                              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                                                sub.state === "active" || sub.state === "sale" ? "bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-700/10" : 
+                                                sub.state === "active" || sub.state === "sale" ? "bg-slate-100 text-slate-900 ring-1 ring-inset ring-slate-200" : 
                                                 "bg-slate-50 text-slate-600 ring-1 ring-inset ring-slate-500/10"
                                             }`}>
                                                 {sub.state}
@@ -289,15 +289,12 @@ export default function AdminDashboardPage() {
         <div className="space-y-6">
             
             {/* Revenue Mini Chart (Visual only) */}
-            <div className="rounded-xl border border-slate-200 bg-blue-600 p-6 shadow-sm text-white relative overflow-hidden">
+            <div className="rounded-xl border border-slate-200 bg-slate-900 p-6 shadow-sm text-white relative overflow-hidden">
                 <div className="relative z-10">
-                    <p className="text-blue-100 text-sm font-medium">projected Revenue</p>
+                    <p className="text-slate-300 text-sm font-medium">Projected Revenue</p>
                     <h3 className="text-3xl font-bold mt-1">₹{(mrr * 12).toLocaleString("en-IN")}</h3>
-                    <p className="text-blue-200 text-xs mt-2">Annual Run Rate based on current MRR</p>
+                    <p className="text-slate-400 text-xs mt-2">Annual Run Rate based on current MRR</p>
                 </div>
-                {/* Decorative circles */}
-                <div className="absolute -top-6 -right-6 h-32 w-32 rounded-full bg-white/10 blur-2xl"></div>
-                <div className="absolute bottom-0 right-0 h-24 w-24 rounded-full bg-white/10 blur-xl"></div>
             </div>
 
             {/* Recent Activity */}
@@ -312,7 +309,7 @@ export default function AdminDashboardPage() {
                         <ul className="divide-y divide-slate-100">
                             {recentActivity.map((item: any, i) => (
                                 <li key={i} className="flex items-start gap-3 p-4 hover:bg-slate-50/50 transition-colors">
-                                    <div className={`mt-0.5 rounded-full p-1.5 ${item.type === 'invoice' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
+                                    <div className={`mt-0.5 rounded-full p-1.5 ${item.type === 'invoice' ? 'bg-slate-100 text-slate-600' : 'bg-slate-100 text-slate-600'}`}>
                                         {item.type === 'invoice' ? <FileText className="h-3 w-3" /> : <Activity className="h-3 w-3" />}
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -336,7 +333,7 @@ export default function AdminDashboardPage() {
                         </ul>
                     )}
                 </div>
-                <div className="border-t border-slate-200 bg-slate-50 px-5 py-3">
+                <div className="border-t border-slate-200 bg-white px-5 py-3">
                      <Link href="/admin/reports" className="text-xs font-medium text-slate-600 hover:text-slate-900 block text-center">
                         View Full History
                      </Link>

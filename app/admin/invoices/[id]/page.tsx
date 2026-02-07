@@ -30,7 +30,7 @@ export default function InvoiceDetailPage() {
     const invoiceState = invoice.state === 'posted' && invoice.payment_state === 'paid' ? 'paid' : invoice.state;
 
     return (
-        <div className="flex flex-col h-full bg-slate-50">
+        <div className="flex flex-col h-full bg-white">
              {/* Header Section */}
              <div className="bg-white border-b border-slate-200 px-6 py-4">
                 <div className="flex flex-col gap-4">
@@ -143,7 +143,7 @@ export default function InvoiceDetailPage() {
                         {/* Invoice Lines Table */}
                         <div className="mt-8 border rounded-lg overflow-hidden">
                              <table className="w-full text-left text-sm">
-                                 <thead className="bg-slate-50 border-b border-slate-200">
+                                 <thead className="bg-white border-b border-slate-200">
                                      <tr>
                                          <th className="px-4 py-3 font-medium text-slate-900">Product</th>
                                          <th className="px-4 py-3 font-medium text-slate-900 text-right">Quantity</th>

@@ -9,7 +9,7 @@ export default function SettingsPage() {
     const isLoading = loading && !settings;
 
     return (
-        <div className="flex flex-col h-full bg-slate-50">
+        <div className="flex flex-col h-full bg-white">
              {/* Header */}
              <div className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
                 <div>
@@ -36,19 +36,19 @@ export default function SettingsPage() {
                             <div className="grid grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Company Name</label>
-                                    <input type="text" className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-slate-50 text-slate-600" defaultValue={settings?.company_name || ""} disabled />
+                                    <input type="text" className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white text-slate-600" defaultValue={settings?.company_name || ""} disabled />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Currency</label>
-                                    <input type="text" className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-slate-50 text-slate-600" defaultValue={settings?.currency || ""} disabled />
+                                    <input type="text" className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white text-slate-600" defaultValue={settings?.currency || ""} disabled />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Support Email</label>
-                                    <input type="email" className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-slate-50 text-slate-600" defaultValue={settings?.email || ""} disabled />
+                                <div className="col-span-2">
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                                    <input type="email" className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white text-slate-600" defaultValue={settings?.email || ""} disabled />
                                 </div>
-                                <div>
+                                <div className="col-span-2">
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
-                                    <input type="text" className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-slate-50 text-slate-600" defaultValue={settings?.phone || ""} disabled />
+                                    <input type="text" className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white text-slate-600" defaultValue={settings?.phone || ""} disabled />
                                 </div>
                             </div>
                         )}
@@ -72,7 +72,7 @@ export default function SettingsPage() {
                         </div>
                     </div>
                     
-                    <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end">
+                    <div className="px-6 py-4 bg-white border-t border-slate-200 flex justify-end">
                         <button className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 shadow-sm transition-colors">
                             Save Changes
                         </button>

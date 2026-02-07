@@ -8,7 +8,7 @@ export default function AdminDiscountsPage() {
     const { data: discounts, loading, error } = useOdooPolling<any[]>(odooAPI.getDiscounts);
 
     return (
-        <div className="flex flex-col h-full bg-slate-50">
+        <div className="flex flex-col h-full bg-white">
              {/* Header */}
              <div className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
                 <div>

@@ -1,127 +1,189 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { FileText, ArrowLeft, Calendar, User, Download, Printer, CheckCircle, Clock, AlertCircle } from "lucide-react";
 import odooAPI from "@/lib/odoo-api";
+import { Toaster, toast } from "react-hot-toast";
 
-type InvoiceLine = {
-  id: number;
-  name: string;
-  quantity: number;
-  price_unit: number;
-  price_subtotal: number;
-};
+export default function InvoiceDetailPage() {
+    const { id } = useParams();
+    const router = useRouter();
+    const [invoice, setInvoice] = useState<any | null>(null);
+    const [loading, setLoading] = useState(true);
 
-type Invoice = {
-  id: number;
-  name: string;
-  invoice_date: string;
-  payment_state: string;
-  partner: {
-    name: string;
-    email: string;
-    address: string;
-  };
-  lines: InvoiceLine[];
-  amount_untaxed: number;
-  amount_tax: number;
-  amount_total: number;
-};
+    useEffect(() => {
+        if (!id) return;
 
-export default function InvoiceDetailsPage() {
-  const { id } = useParams();
-  const [invoice, setInvoice] = useState<Invoice | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+        // Fetch all invoices and find the one we need (since we enriched the list API)
+        odooAPI.getUserInvoices()
+            .then((res) => {
+                const allInvoices = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []);
+                const found = allInvoices.find((inv: any) => inv.id.toString() === id.toString());
+                
+                if (found) {
+                    setInvoice(found);
+                } else {
+                    toast.error("Invoice not found.");
+                    setTimeout(() => router.push("/user/invoices"), 2000);
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                toast.error("Failed to load invoice details.");
+            })
+            .finally(() => setLoading(false));
+    }, [id, router]);
 
-  useEffect(() => {
-    if (!id) return;
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+                <div className="animate-pulse flex flex-col items-center">
+                    <div className="h-12 w-12 bg-slate-200 rounded-full mb-4"></div>
+                    <div className="h-4 w-48 bg-slate-200 rounded"></div>
+                </div>
+            </div>
+        );
+    }
 
-    odooAPI
-      .getInvoiceById(id)
-      .then((res) => setInvoice(res.data))
-      .catch(() => setError("Failed to load invoice"))
-      .finally(() => setLoading(false));
-  }, [id]);
+    if (!invoice) return null;
 
-  if (loading) return <div className="p-8 text-text-muted">Loading invoice...</div>;
-  if (error) return <div className="p-8 text-red-600">{error}</div>;
-  if (!invoice) return <div className="p-8">Invoice not found</div>;
+    const getStatusConfig = (state: string, paymentState: string) => {
+         if (state === 'cancel') return { color: 'bg-red-50 text-red-700 border-red-100', icon: AlertCircle, label: 'Cancelled' };
+         if (paymentState === 'paid') return { color: 'bg-green-50 text-green-700 border-green-100', icon: CheckCircle, label: 'Paid' };
+         if (paymentState === 'reversed') return { color: 'bg-orange-50 text-orange-700 border-orange-100', icon: Clock, label: 'Reversed' };
+         if (state === 'posted') return { color: 'bg-blue-50 text-blue-700 border-blue-100', icon: OpenIcon, label: 'Open' };
+         return { color: 'bg-slate-50 text-slate-600 border-slate-100', icon: FileText, label: 'Draft' };
+    };
+    
+    // Fix for missing icon
+    const OpenIcon = FileText; 
 
-  return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div className="flex items-center gap-4">
-        <Link href="/user/invoices" className="p-2 hover:bg-slate-100 rounded-full">
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
+    const status = getStatusConfig(invoice.state, invoice.payment_state);
+    const StatusIcon = status.icon;
 
-        <h1 className="text-2xl font-bold">Invoice {invoice.name}</h1>
+    return (
+        <div className="min-h-screen bg-slate-50/50 py-12 px-4 sm:px-6 lg:px-8">
+            <Toaster position="bottom-right" />
+            
+            <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {/* Header Actions */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <Link 
+                        href="/user/invoices" 
+                        className="group flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors"
+                    >
+                        <div className="p-2 rounded-full bg-white border border-slate-200 group-hover:border-slate-300 transition-colors">
+                            <ArrowLeft className="w-4 h-4" />
+                        </div>
+                        Back to Invoices
+                    </Link>
 
-        <span
-          className={`text-xs font-bold px-3 py-1 rounded-full ${
-            invoice.payment_state === "paid"
-              ? "bg-green-100 text-green-700"
-              : "bg-red-100 text-red-700"
-          }`}
-        >
-          {invoice.payment_state}
-        </span>
-      </div>
+                    <div className="flex items-center gap-3">
+                        <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
+                            <Printer className="w-4 h-4" /> Print
+                        </button>
+                        <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/10">
+                            <Download className="w-4 h-4" /> Download PDF
+                        </button>
+                    </div>
+                </div>
 
-      <div className="bg-white p-8 rounded-xl border">
-        <div className="grid md:grid-cols-2 gap-6 mb-6">
-          <div>
-            <p className="text-sm text-text-muted">Invoice Date</p>
-            <p className="font-semibold">{invoice.invoice_date}</p>
-          </div>
+                {/* Main Invoice Card */}
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    {/* Invoice Header */}
+                    <div className="p-8 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row justify-between gap-6">
+                        <div>
+                            <div className="flex items-center gap-3 mb-2">
+                                <h1 className="text-3xl font-bold text-slate-900">{invoice.name}</h1>
+                                <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${status.color}`}>
+                                    <StatusIcon className="w-3.5 h-3.5" />
+                                    {status.label}
+                                </span>
+                            </div>
+                            <p className="text-slate-500 flex items-center gap-2 text-sm">
+                                <Calendar className="w-4 h-4" /> 
+                                Issued on {invoice.invoice_date}
+                            </p>
+                        </div>
+                        <div className="text-left md:text-right">
+                            <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Amount Due</p>
+                            <p className="text-4xl font-bold text-slate-900 tracking-tight">₹{Number(invoice.amount_total).toLocaleString()}</p>
+                            <p className="text-sm text-slate-500 mt-1">
+                                {invoice.payment_state === 'paid' ? 'Fully Paid' : 'Payment Pending'}
+                            </p>
+                        </div>
+                    </div>
 
-          <div className="md:text-right">
-            <p className="font-bold">{invoice.partner.name}</p>
-            <p className="text-sm">{invoice.partner.address}</p>
-            <p className="text-sm text-primary">{invoice.partner.email}</p>
-          </div>
+                    {/* Customer & Details */}
+                    <div className="p-8 grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Bill To</h3>
+                            <div className="flex items-start gap-4">
+                                <div className="p-3 bg-slate-100 rounded-xl">
+                                    <User className="w-6 h-6 text-slate-600" />
+                                </div>
+                                <div>
+                                    <p className="font-bold text-slate-900 text-lg">{invoice.partner_id?.[1]}</p>
+                                    <p className="text-slate-500 text-sm mt-1">Customer ID: #{invoice.partner_id?.[0]}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="space-y-4">
+                            <div className="flex justify-between py-3 border-b border-slate-50">
+                                <span className="text-slate-500 text-sm">Invoice Date</span>
+                                <span className="font-medium text-slate-900">{invoice.invoice_date}</span>
+                            </div>
+                            <div className="flex justify-between py-3 border-b border-slate-50">
+                                <span className="text-slate-500 text-sm">Reference</span>
+                                <span className="font-medium text-slate-900">{invoice.ref || '-'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Line Items */}
+                    <div className="p-8 pt-0">
+                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-6">Invoice Items</h3>
+                        <div className="border border-slate-200 rounded-xl overflow-hidden">
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-medium">
+                                    <tr>
+                                        <th className="px-6 py-4">Description</th>
+                                        <th className="px-6 py-4 text-right">Qty</th>
+                                        <th className="px-6 py-4 text-right">Unit Price</th>
+                                        <th className="px-6 py-4 text-right">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100">
+                                    {invoice.lines?.map((line: any) => (
+                                        <tr key={line.id} className="group hover:bg-slate-50/50 transition-colors">
+                                            <td className="px-6 py-4 font-medium text-slate-900">{line.name}</td>
+                                            <td className="px-6 py-4 text-right text-slate-600">{line.quantity}</td>
+                                            <td className="px-6 py-4 text-right text-slate-600">₹{line.price_unit.toLocaleString()}</td>
+                                            <td className="px-6 py-4 text-right font-bold text-slate-900">₹{line.price_subtotal.toLocaleString()}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                                <tfoot className="bg-slate-50 border-t border-slate-200">
+                                    <tr>
+                                        <td colSpan={3} className="px-6 py-4 text-right font-medium text-slate-600">Untaxed Amount</td>
+                                        <td className="px-6 py-4 text-right font-bold text-slate-900">₹{Number(invoice.amount_untaxed || 0).toLocaleString()}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan={3} className="px-6 py-4 text-right font-medium text-slate-600">Tax</td>
+                                        <td className="px-6 py-4 text-right font-bold text-slate-900">₹{Number(invoice.amount_tax || 0).toLocaleString()}</td>
+                                    </tr>
+                                    <tr className="bg-slate-900 text-white">
+                                        <td colSpan={3} className="px-6 py-4 text-right font-bold">Total</td>
+                                        <td className="px-6 py-4 text-right font-bold text-lg">₹{Number(invoice.amount_total).toLocaleString()}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <table className="w-full text-sm border-t">
-          <thead>
-            <tr className="border-b">
-              <th className="py-2 text-left">Item</th>
-              <th className="py-2 text-center">Qty</th>
-              <th className="py-2 text-right">Unit</th>
-              <th className="py-2 text-right">Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            {invoice.lines.map((line) => (
-              <tr key={line.id} className="border-b">
-                <td className="py-2">{line.name}</td>
-                <td className="py-2 text-center">{line.quantity}</td>
-                <td className="py-2 text-right">₹{line.price_unit}</td>
-                <td className="py-2 text-right">₹{line.price_subtotal}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <div className="mt-6 flex justify-end">
-          <div className="w-64 space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span>Untaxed</span>
-              <span>₹{invoice.amount_untaxed}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Tax</span>
-              <span>₹{invoice.amount_tax}</span>
-            </div>
-            <div className="flex justify-between font-bold border-t pt-2">
-              <span>Total</span>
-              <span className="text-primary">₹{invoice.amount_total}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    );
 }

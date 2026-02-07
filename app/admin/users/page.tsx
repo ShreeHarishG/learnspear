@@ -35,7 +35,7 @@ export default function AdminUsersPage() {
 
   // ================= RENDER =================
   return (
-    <div className="flex flex-col h-full bg-slate-50">
+    <div className="flex flex-col h-full bg-white">
        {/* Header */}
        <div className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
         <div>
@@ -103,7 +103,7 @@ export default function AdminUsersPage() {
           <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="border-b border-slate-200 bg-slate-50">
+                <thead className="border-b border-slate-200 bg-white">
                   <tr>
                     <th className="px-6 py-3 font-semibold text-slate-900">ID</th>
                     <th className="px-6 py-3 font-semibold text-slate-900">Name</th>

@@ -17,15 +17,15 @@ export function UserNavbar() {
     ];
 
     return (
-        <header className="sticky top-0 z-50 w-full bg-white border-b border-border-color shadow-sm">
+        <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-200 shadow-sm">
             <div className="container mx-auto px-4 h-20 flex items-center justify-between">
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2 group">
                     <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white text-2xl font-bold transition-transform group-hover:scale-105">
-                        L
+                        M
                     </div>
                     <span className="text-xl font-bold text-text-heading tracking-tight hidden sm:inline-block">
-                        Learn<span className="text-primary">Spear</span>
+                        Mio
                     </span>
                 </Link>
 

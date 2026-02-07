@@ -29,7 +29,7 @@ export default function QuotationsPage() {
   if (error) return <div className="p-8 text-red-600 font-medium">Error loading data: {error}</div>;
 
   return (
-    <div className="font-sans text-slate-900">
+    <div className="min-h-screen bg-white font-sans text-slate-900">
       
       {/* Header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -80,7 +80,7 @@ export default function QuotationsPage() {
       <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 border-b border-slate-200">
+            <thead className="bg-white border-b border-slate-200">
               <tr>
                 <th className="px-6 py-3 font-medium text-slate-500">
                     <div className="flex items-center gap-1 cursor-pointer hover:text-slate-700">
@@ -146,7 +146,7 @@ export default function QuotationsPage() {
             </tbody>
           </table>
         </div>
-        <div className="border-t border-slate-200 bg-slate-50 px-6 py-3 flex items-center justify-between">
+        <div className="border-t border-slate-200 bg-white px-6 py-3 flex items-center justify-between">
            <p className="text-xs text-slate-500">
                Showing <span className="font-medium">{filteredList?.length}</span> quotations
            </p>

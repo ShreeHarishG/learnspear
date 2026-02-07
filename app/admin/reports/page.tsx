@@ -9,7 +9,7 @@ export default function AdminReportsPage() {
     const { data: stats } = useOdooPolling<OdooStats>(odooAPI.getStats);
 
     return (
-        <div className="flex flex-col h-full bg-slate-50">
+        <div className="flex flex-col h-full bg-white">
              {/* Header */}
              <div className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
                 <div>
@@ -36,7 +36,7 @@ export default function AdminReportsPage() {
                              </span>
                              <span className="text-sm text-slate-500 ml-2">Total Collected</span>
                         </div>
-                        <div className="h-40 bg-slate-50 rounded-lg flex items-end justify-between px-4 pb-4">
+                        <div className="h-40 bg-white border border-slate-200 rounded-lg flex items-end justify-between px-4 pb-4">
                             <div className="w-8 bg-blue-200 h-[40%] rounded-t-sm"></div>
                             <div className="w-8 bg-blue-300 h-[60%] rounded-t-sm"></div>
                             <div className="w-8 bg-blue-400 h-[50%] rounded-t-sm"></div>

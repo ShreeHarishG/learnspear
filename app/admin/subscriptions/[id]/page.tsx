@@ -37,7 +37,7 @@ export default function SubscriptionDetailPage() {
     };
 
     return (
-        <div className="flex flex-col h-full bg-slate-50">
+        <div className="flex flex-col h-full bg-white">
              {/* Header Section */}
              <div className="bg-white border-b border-slate-200 px-6 py-4">
                 <div className="flex flex-col gap-4">
@@ -58,12 +58,12 @@ export default function SubscriptionDetailPage() {
                          <div className="flex items-center gap-4">
                             {/* Action Buttons */}
                             {subscription.state === 'draft' && (
-                                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition-colors">
+                                <button className="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition-colors">
                                     Confirm Subscription
                                 </button>
                             )}
                             {subscription.state === 'sale' && (
-                                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition-colors">
+                                <button className="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition-colors">
                                     Create Invoice
                                 </button>
                             )}

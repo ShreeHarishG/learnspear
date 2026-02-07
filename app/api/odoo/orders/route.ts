@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
             domain.push(["partner_id", "=", parseInt(partnerId)]);
         }
 
-        const fields = ["id", "name", "partner_id", "date_order", "amount_total", "state"];
+        const fields = ["id", "name", "partner_id", "date_order", "amount_untaxed", "amount_tax", "amount_total", "state", "order_line"];
 
         const orders = await odooCall("call", {
             model: "sale.order",
@@ -32,6 +32,40 @@ export async function GET(request: NextRequest) {
             args: [domain, fields],
             kwargs: { limit: 100, order: "date_order desc" },
         }, cookie || undefined);
+
+        // Fetch Order Lines to allow detail view from list data
+        const allLineIds = orders.reduce((acc: number[], order: any) => {
+            return acc.concat(order.order_line || []);
+        }, []);
+
+        if (allLineIds.length > 0) {
+            const lineFields = ["order_id", "name", "product_uom_qty", "price_unit", "price_subtotal"];
+            const lines = await odooCall("call", {
+                model: "sale.order.line",
+                method: "read",
+                args: [allLineIds, lineFields],
+                kwargs: {},
+            }, cookie || undefined);
+
+            // Group lines by order_id
+            const linesByOrder: Record<number, any[]> = {};
+            lines.forEach((line: any) => {
+                const orderId = line.order_id[0];
+                if (!linesByOrder[orderId]) linesByOrder[orderId] = [];
+                linesByOrder[orderId].push({
+                    id: line.id,
+                    name: line.name,
+                    quantity: line.product_uom_qty,
+                    price_unit: line.price_unit,
+                    price_subtotal: line.price_subtotal
+                });
+            });
+
+            // Attach lines to orders
+            orders.forEach((order: any) => {
+                order.lines = linesByOrder[order.id] || [];
+            });
+        }
 
         return NextResponse.json({ status: "success", data: orders });
     } catch (error: any) {
