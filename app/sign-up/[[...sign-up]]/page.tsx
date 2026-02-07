@@ -70,7 +70,7 @@ export default function SignUpPage() {
             <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl border border-border-color">
                 <div className="mb-8 text-center">
                     <h1 className="text-3xl font-bold text-primary mb-2">Create Account</h1>
-                    <p className="text-text-muted">Join LearnSpear today</p>
+                    <p className="text-text-muted">Join Mio today</p>
                 </div>
 
                 {!pendingVerification ? (

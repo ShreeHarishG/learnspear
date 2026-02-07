@@ -24,7 +24,7 @@ export function AdminSidebar() {
     return (
         <div className="flex h-full w-64 flex-col border-r border-border-color bg-white shadow-sm">
             <div className="flex h-16 items-center px-6 bg-primary">
-                <span className="text-xl font-bold text-white tracking-widest uppercase">LearnSpear</span>
+                <span className="text-xl font-bold text-white tracking-widest uppercase">Mio</span>
             </div>
             <nav className="flex-1 space-y-1 px-3 py-4 overflow-y-auto">
                 {navigation.map((item) => {
@@ -51,7 +51,7 @@ export function AdminSidebar() {
                     </div>
                     <div className="overflow-hidden">
                         <p className="truncate text-sm font-semibold text-text-heading">Admin User</p>
-                        <p className="truncate text-xs text-text-muted">admin@learnspear.com</p>
+                        <p className="truncate text-xs text-text-muted">admin@mio.com</p>
                     </div>
                 </div>
             </div>

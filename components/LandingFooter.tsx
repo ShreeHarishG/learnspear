@@ -67,7 +67,7 @@ export function LandingFooter() {
                 </div>
 
                 <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-500">
-                    <p>© {new Date().getFullYear()} LearnSpear Inc. All rights reserved.</p>
+                    <p>© {new Date().getFullYear()} Mio. All rights reserved.</p>
                     <div className="flex gap-6">
                         <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
                         <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>

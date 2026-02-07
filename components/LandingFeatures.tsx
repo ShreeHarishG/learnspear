@@ -49,7 +49,7 @@ export function LandingFeatures() {
 
             <div className="container mx-auto px-6">
                 <div className="text-center max-w-3xl mx-auto mb-20">
-                    <h2 className="text-primary font-bold tracking-wide uppercase text-sm mb-4">Why Choose LearnSpear</h2>
+                    <h2 className="text-primary font-bold tracking-wide uppercase text-sm mb-4">Why Choose Mio</h2>
                     <h3 className="text-4xl lg:text-5xl font-bold text-text-heading mb-6 tracking-tight">
                         Powerful features for <br /> modern businesses.
                     </h3>

@@ -47,7 +47,7 @@ export function LandingHero() {
                     <div className="rounded-xl overflow-hidden bg-slate-900 border border-slate-800">
                         <Image
                             src="/hero-dashboard.png"
-                            alt="LearnSpear Dashboard Mockup"
+                            alt="Mio Dashboard Mockup"
                             width={1200}
                             height={800}
                             className="w-full h-auto object-cover"

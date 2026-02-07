@@ -9,10 +9,10 @@ export function LandingNavbar() {
             <div className="container mx-auto px-6 h-20 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-2 group">
                     <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-primary/20 transition-transform group-hover:scale-105">
-                        L
+                        M
                     </div>
                     <span className="text-xl font-bold text-text-heading tracking-tight">
-                        Learn<span className="text-primary">Spear</span>
+                        Mio
                     </span>
                 </Link>
 
