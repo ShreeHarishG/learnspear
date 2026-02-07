@@ -4,6 +4,8 @@ import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
+// 1. IMPORT ODOO API
+import odooAPI from "@/lib/odoo-api";
 
 export default function SignUpPage() {
     const { isLoaded, signUp, setActive } = useSignUp();
@@ -12,8 +14,10 @@ export default function SignUpPage() {
     const [pendingVerification, setPendingVerification] = useState(false);
     const [code, setCode] = useState("");
     const [error, setError] = useState("");
+    const [isSyncing, setIsSyncing] = useState(false); // Track Odoo sync status
     const router = useRouter();
-    // Form Submit: Create User
+
+    // Form Submit: Create Clerk User
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!isLoaded) return;
@@ -23,45 +27,55 @@ export default function SignUpPage() {
                 emailAddress,
                 password,
                 unsafeMetadata: {
-                    role: "user", // Hardcoded role
+                    role: "user",
                 },
             });
 
-            // Send email verification code
             await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-
             setPendingVerification(true);
+            setError("");
         } catch (err: any) {
             console.error(JSON.stringify(err, null, 2));
             setError(err.errors?.[0]?.message || "Something went wrong during sign up");
         }
     };
 
-    // Verify Email Code
+    // Verify Email Code + THE LAZY ODOO SYNC
     const onPressVerify = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!isLoaded) return;
+        setIsSyncing(true);
+        setError("");
 
         try {
             const completeSignUp = await signUp.attemptEmailAddressVerification({
                 code,
             });
 
-            if (completeSignUp.status !== "complete") {
-                /*  investigate the response, to see if there was an error
-                 or if the user needs to complete more steps.*/
-                console.log(JSON.stringify(completeSignUp, null, 2));
-            }
-
             if (completeSignUp.status === "complete") {
+                // A. Activate the Clerk Session
                 await setActive({ session: completeSignUp.createdSessionId });
 
-                // Redirect to user dashboard
-                router.push("/user");
+                // B. THE LAZY WAY: Sync with Odoo using the verified email
+                // This call sets the Odoo session cookie in the browser automatically
+                const odooSync = await odooAPI.syncClerkUser(emailAddress);
+
+                if (odooSync.success) {
+                    router.push("/user");
+                } else {
+                    console.error("Odoo Sync Failed:", odooSync.error);
+                    // We still redirect because Clerk is successful, 
+                    // but we warn the user or let the dashboard try again.
+                    router.push("/user");
+                }
+            } else {
+                console.log("Incomplete signup status:", completeSignUp.status);
+                setIsSyncing(false);
             }
         } catch (err: any) {
             console.error(JSON.stringify(err, null, 2));
             setError(err.errors?.[0]?.message || "Verification failed");
+            setIsSyncing(false);
         }
     };
 
@@ -97,7 +111,6 @@ export default function SignUpPage() {
                                 required
                             />
                         </div>
-
 
                         {error && <p className="text-sm text-red-600 text-center">{error}</p>}
 
@@ -137,9 +150,10 @@ export default function SignUpPage() {
 
                         <button
                             type="submit"
-                            className="w-full rounded-lg bg-primary py-3 font-semibold text-white shadow-lg transition-transform hover:scale-[1.02] hover:bg-primary-dark"
+                            disabled={isSyncing}
+                            className="w-full rounded-lg bg-primary py-3 font-semibold text-white shadow-lg transition-transform hover:scale-[1.02] hover:bg-primary-dark disabled:opacity-70"
                         >
-                            Verify & Create Account
+                            {isSyncing ? "Connecting to Odoo..." : "Verify & Create Account"}
                         </button>
                     </form>
                 )}

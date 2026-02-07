@@ -1,6 +1,7 @@
 "use server";
 
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import odooAPI from "@/lib/odoo-api"; // Import if you want to pre-create customers in Odoo
 
 export async function createAdminInvitation(email: string) {
   const { userId } = await auth();
@@ -11,21 +12,22 @@ export async function createAdminInvitation(email: string) {
 
   try {
     const client = await clerkClient();
-
     const user = await client.users.getUser(userId);
-    const role = user.publicMetadata.role || user.unsafeMetadata.role;
+
+    // Security: Only trust publicMetadata for admin checks
+    const role = user.publicMetadata.role;
 
     if (role !== "admin") {
       throw new Error("Unauthorized: Only admins can invite users.");
     }
 
+    // Create the invitation
     await client.invitations.createInvitation({
       emailAddress: email,
-      redirectUrl:
-        process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ||
-        "http://localhost:3000/sign-in",
+      // Ensure this points to your sign-up page so the Odoo sync triggers on completion
+      redirectUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/sign-up`,
       publicMetadata: {
-        role: "admin",
+        role: "admin", // New user will inherit this role securely
       },
       ignoreExisting: true,
     });
@@ -35,7 +37,7 @@ export async function createAdminInvitation(email: string) {
     console.error("Error creating invitation:", error);
     return {
       success: false,
-      message: error?.message || "Failed to create invitation",
+      message: error?.errors?.[0]?.message || error?.message || "Failed to create invitation",
     };
   }
 }
@@ -43,19 +45,16 @@ export async function createAdminInvitation(email: string) {
 export async function getCurrentUserRole(): Promise<string | null> {
   const { userId } = await auth();
 
-  if (!userId) {
-    return null;
-  }
+  if (!userId) return null;
 
   try {
     const client = await clerkClient();
     const user = await client.users.getUser(userId);
 
-    const role =
-      (user.publicMetadata?.role as string | undefined) ||
-      (user.unsafeMetadata?.role as string | undefined);
+    // Priority: publicMetadata (Admin set) > unsafeMetadata (Self set)
+    const role = (user.publicMetadata?.role as string) || (user.unsafeMetadata?.role as string);
 
-    return role ?? null;
+    return role ?? "user";
   } catch (error) {
     console.error("getCurrentUserRole error:", error);
     return null;

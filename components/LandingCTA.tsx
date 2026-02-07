@@ -17,7 +17,7 @@ export function LandingCTA() {
                             Start Taking Control of Your <br /> Subscriptions Today.
                         </h2>
                         <p className="text-lg text-white/90 mb-10 leading-relaxed">
-                            Join over 10,000 satisfied businesses who have streamlined their financial operations with LearnSpear. Start your 14-day free trial now.
+                            Join over 10,000 satisfied businesses who have streamlined their financial operations with Mio. Start your 14-day free trial now.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">

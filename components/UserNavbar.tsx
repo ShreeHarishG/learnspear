@@ -10,7 +10,7 @@ export function UserNavbar() {
     const { user } = useUser();
 
     const navItems = [
-        { name: "Home", href: "/" },
+        { name: "Home", href: "/user/" },
         { name: "Shop", href: "/user/shop" },
         { name: "My Orders", href: "/user/orders" },
         { name: "My Account", href: "/user/profile" },

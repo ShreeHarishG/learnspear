@@ -48,6 +48,16 @@ export interface OdooInvoice {
   state: string;
 }
 
+/** GET /api/orders (quotations too) */
+export interface OdooOrder {
+  id: number;
+  name: string;
+  partner_id: [number, string];
+  date_order: string;
+  amount_total: number;
+  state: string;
+}
+
 /** GET /api/stats - dashboard KPIs */
 export interface OdooStats {
   active_subscriptions: number;

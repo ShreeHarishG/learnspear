@@ -5,8 +5,8 @@ import { Plus, Minus } from "lucide-react";
 
 const faqs = [
     {
-        question: "How does LearnSpear integrate with my subscriptions?",
-        answer: "LearnSpear connects directly to your bank account or credit card statements via secure APIs (like Plaid) to automatically detect recurring payments. You can also manually add subscriptions or upload CSV statements."
+        question: "How does Mio integrate with my subscriptions?",
+        answer: "Mio connects directly to your bank account or credit card statements via secure APIs (like Plaid) to automatically detect recurring payments. You can also manually add subscriptions or upload CSV statements."
     },
     {
         question: "Is my financial data secure?",

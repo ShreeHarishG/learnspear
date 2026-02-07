@@ -8,7 +8,7 @@ const testimonials = [
         name: "Sarah Jenkins",
         role: "CTO at TechFlow",
         image: "https://randomuser.me/api/portraits/women/1.jpg",
-        content: "LearnSpear transformed how we manage our SaaS spend. We saved over $12k in the first month alone by identifying unused licenses.",
+        content: "Mio transformed how we manage our SaaS spend. We saved over $12k in the first month alone by identifying unused licenses.",
         rating: 5
     },
     {
