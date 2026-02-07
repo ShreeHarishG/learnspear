@@ -1,38 +1,63 @@
 "use server";
 
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 
 export async function createAdminInvitation(email: string) {
-    const { userId } = await auth();
+  const { userId } = await auth();
 
-    if (!userId) {
-        throw new Error("Not authenticated");
+  if (!userId) {
+    throw new Error("Not authenticated");
+  }
+
+  try {
+    const client = await clerkClient();
+
+    const user = await client.users.getUser(userId);
+    const role = user.publicMetadata.role || user.unsafeMetadata.role;
+
+    if (role !== "admin") {
+      throw new Error("Unauthorized: Only admins can invite users.");
     }
 
-    try {
-        const client = await clerkClient();
+    await client.invitations.createInvitation({
+      emailAddress: email,
+      redirectUrl:
+        process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ||
+        "http://localhost:3000/sign-in",
+      publicMetadata: {
+        role: "admin",
+      },
+      ignoreExisting: true,
+    });
 
-        // precise permissions check would be better, but assuming any admin can invite
-        const user = await client.users.getUser(userId);
-        const role = user.publicMetadata.role || user.unsafeMetadata.role;
+    return { success: true, message: "Invitation sent successfully." };
+  } catch (error: any) {
+    console.error("Error creating invitation:", error);
+    return {
+      success: false,
+      message: error?.message || "Failed to create invitation",
+    };
+  }
+}
 
-        if (role !== "admin") {
-            throw new Error("Unauthorized: Only admins can invite other admins.");
-        }
+export async function getCurrentUserRole(): Promise<string | null> {
+  const { userId } = await auth();
 
-        await client.invitations.createInvitation({
-            emailAddress: email,
-            redirectUrl: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL || "http://localhost:4000",
-            publicMetadata: {
-                role: "admin",
-            },
-            ignoreExisting: true,
-        });
+  if (!userId) {
+    return null;
+  }
 
-        return { success: true, message: "Invitation sent successfully." };
-    } catch (error: any) {
-        console.error("Error creating invitation:", error);
-        return { success: false, message: error.message || "Failed to create invitation" };
-    }
+  try {
+    const client = await clerkClient();
+    const user = await client.users.getUser(userId);
+
+    const role =
+      (user.publicMetadata?.role as string | undefined) ||
+      (user.unsafeMetadata?.role as string | undefined);
+
+    return role ?? null;
+  } catch (error) {
+    console.error("getCurrentUserRole error:", error);
+    return null;
+  }
 }

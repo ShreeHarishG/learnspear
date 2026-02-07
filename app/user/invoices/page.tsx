@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import odooAPI from "@/lib/odoo-api";
 import type { OdooInvoice } from "@/lib/odoo-api-types";
 
@@ -36,16 +37,20 @@ export default function UserInvoicesPage() {
                     </thead>
                     <tbody className="divide-y divide-border-color">
                         {list.map((inv) => (
-                            <tr key={inv.id} className="hover:bg-slate-50/50">
-                                <td className="px-4 py-3 font-medium">{inv.name}</td>
+                            <tr key={inv.id} className="hover:bg-slate-50/50 transition-colors group">
+                                <td className="px-4 py-3 font-medium text-primary">
+                                    <Link href={`/user/invoices/${inv.id}`} className="hover:underline">
+                                        {inv.name}
+                                    </Link>
+                                </td>
                                 <td className="px-4 py-3">{inv.partner_id?.[1] ?? "-"}</td>
                                 <td className="px-4 py-3">{inv.invoice_date}</td>
                                 <td className="px-4 py-3">
-                                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${inv.payment_state === "paid" ? "bg-green-100 text-green-800" : inv.payment_state === "partial" ? "bg-yellow-100 text-yellow-800" : "bg-red-100 text-red-800"}`}>
+                                    <span className={`rounded-full px-2 py-0.5 text-xs font-bold uppercase tracking-wider ${inv.payment_state === "paid" ? "bg-green-100 text-green-700" : inv.payment_state === "partial" ? "bg-yellow-100 text-yellow-700" : "bg-red-100 text-red-700"}`}>
                                         {inv.payment_state}
                                     </span>
                                 </td>
-                                <td className="px-4 py-3">₹{Number(inv.amount_total).toFixed(2)}</td>
+                                <td className="px-4 py-3 font-medium">₹{Number(inv.amount_total).toFixed(2)}</td>
                             </tr>
                         ))}
                     </tbody>
