@@ -3,6 +3,9 @@ import { redirect } from "next/navigation";
 import { LandingNavbar } from "@/components/LandingNavbar";
 import { LandingHero } from "@/components/LandingHero";
 import { LandingFeatures } from "@/components/LandingFeatures";
+import { LandingTestimonials } from "@/components/LandingTestimonials";
+import { LandingFAQ } from "@/components/LandingFAQ";
+import { LandingCTA } from "@/components/LandingCTA";
 import { LandingFooter } from "@/components/LandingFooter";
 
 export default async function Home() {
@@ -28,6 +31,9 @@ export default async function Home() {
       <main>
         <LandingHero />
         <LandingFeatures />
+        <LandingTestimonials />
+        <LandingFAQ />
+        <LandingCTA />
       </main>
       <LandingFooter />
     </div>

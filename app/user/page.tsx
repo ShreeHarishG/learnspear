@@ -1,129 +1,132 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { Search, Filter, ArrowUpDown } from "lucide-react";
-import Image from "next/image";
+import { User, CreditCard, FileText, Package, Settings, ShoppingCart, Activity, ShoppingBag, TrendingUp, AlertCircle, DollarSign, Calendar } from "lucide-react";
+import { KPICard } from "@/components/KPICard";
 
-// Mock Data
-const PRODUCTS = [
-    { id: 1, name: "Premium SaaS Plan", category: "Subscription", price: 1200, billing: "Monthly", image: "/placeholder-product-1.png" },
-    { id: 2, name: "Enterprise Analytics", category: "Add-on", price: 500, billing: "Monthly", image: "/placeholder-product-2.png" },
-    { id: 3, name: "Data Storage Pack", category: "Infrastructure", price: 200, billing: "Monthly", image: "/placeholder-product-3.png" },
-    { id: 4, name: "Security Audit Tool", category: "Tools", price: 800, billing: "One-time", image: "/placeholder-product-4.png" },
-    { id: 5, name: "API Rate Limit Boost", category: "Add-on", price: 150, billing: "Monthly", image: "/placeholder-product-5.png" },
-    { id: 6, name: "White Label License", category: "License", price: 5000, billing: "Yearly", image: "/placeholder-product-6.png" },
+// Mock Data for KPIs
+const KEY_METRICS = [
+    { title: "Total Monthly Spend", value: "$2,840", change: "+4.5%", changeType: "negative" as const, icon: DollarSign, color: "bg-blue-100 text-blue-600" },
+    { title: "Active Subscriptions", value: "14", change: "+2", changeType: "neutral" as const, icon: Activity, color: "bg-purple-100 text-purple-600" },
+    { title: "Upcoming Invoice", value: "$450", change: "Due in 3 days", changeType: "positive" as const, icon: Calendar, color: "bg-orange-100 text-orange-600" },
+    { title: "Potential Savings", value: "$320/mo", change: "Optimize now", changeType: "positive" as const, icon: TrendingUp, color: "bg-green-100 text-green-600" },
 ];
 
-const CATEGORIES = ["All Products", "Subscription", "Add-on", "Infrastructure", "Tools", "License"];
+const DASHBOARD_LINKS = [
+    { name: "My Profile", href: "/user/profile", icon: User, color: "bg-slate-100 text-slate-600" },
+    { name: "Subscriptions", href: "/user/subscriptions", icon: Activity, color: "bg-slate-100 text-slate-600" },
+    { name: "My Orders", href: "/user/orders", icon: Package, color: "bg-slate-100 text-slate-600" },
+    { name: "Browse Shop", href: "/user/shop", icon: ShoppingBag, color: "bg-indigo-100 text-indigo-600" },
+    { name: "Invoices", href: "/user/invoices", icon: FileText, color: "bg-slate-100 text-slate-600" },
+    { name: "Payments", href: "/user/payments", icon: CreditCard, color: "bg-slate-100 text-slate-600" },
+    { name: "Settings", href: "/user/settings", icon: Settings, color: "bg-slate-100 text-slate-600" },
+    { name: "My Cart", href: "/user/cart", icon: ShoppingCart, color: "bg-slate-100 text-slate-600" },
+];
 
-export default function ShopPage() {
-    const [searchTerm, setSearchTerm] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("All Products");
+const RECENT_ACTIVITY = [
+    { title: "Invoice Paid - Adobe Creative Cloud", date: "2 hours ago", amount: "$54.99", icon: FileText },
+    { title: "New Subscription Added - Figma", date: "Yesterday", amount: "$15.00", icon: Activity },
+    { title: "Payment Method Updated", date: "2 days ago", amount: null, icon: CreditCard },
+];
 
-    const filteredProducts = PRODUCTS.filter(product => {
-        const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = selectedCategory === "All Products" || product.category === selectedCategory;
-        return matchesSearch && matchesCategory;
-    });
+const UPCOMING_PAYMENTS = [
+    { name: "Salesforce CRM", date: "Oct 24, 2026", amount: "$450.00", status: "Upcoming" },
+    { name: "Slack Enterprise", date: "Oct 28, 2026", amount: "$890.00", status: "Upcoming" },
+    { name: "AWS Invoice", date: "Nov 01, 2026", amount: "$1,200.00", status: "Estim." },
+];
 
+export default function UserDashboard() {
     return (
-        <div className="flex flex-col lg:flex-row gap-8">
-            {/* Sidebar Filters */}
-            <aside className="w-full lg:w-64 flex-shrink-0 space-y-8">
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-border-color">
-                    <h3 className="font-bold text-lg text-primary mb-4 flex items-center gap-2">
-                        <Filter className="w-5 h-5 text-accent" /> Filters
-                    </h3>
-
-                    <div className="space-y-6">
-                        <div>
-                            <h4 className="text-sm font-semibold text-text-heading mb-3">Category</h4>
-                            <ul className="space-y-2">
-                                {CATEGORIES.map(cat => (
-                                    <li key={cat}>
-                                        <button
-                                            onClick={() => setSelectedCategory(cat)}
-                                            className={`text-sm w-full text-left px-3 py-2 rounded-lg transition-colors ${selectedCategory === cat
-                                                ? "bg-primary text-white font-medium"
-                                                : "text-text-muted hover:bg-slate-50 hover:text-primary"
-                                                }`}
-                                        >
-                                            {cat}
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h4 className="text-sm font-semibold text-text-heading mb-3">Price Range</h4>
-                            <div className="flex items-center gap-2 text-sm text-text-muted">
-                                <input type="number" placeholder="Min" className="w-full border border-border-color rounded px-2 py-1" />
-                                <span>-</span>
-                                <input type="number" placeholder="Max" className="w-full border border-border-color rounded px-2 py-1" />
-                            </div>
-                        </div>
+        <div className="space-y-8">
+            {/* Header & Stats */}
+            <section>
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h1 className="text-3xl font-bold text-text-heading">Dashboard</h1>
+                        <p className="text-text-muted mt-1">Welcome back, Vishwa. Here&apos;s your financial overview.</p>
                     </div>
-                </div>
-            </aside>
-
-            {/* Main Content */}
-            <div className="flex-1">
-                {/* Shop Header */}
-                <div className="bg-white p-4 rounded-2xl shadow-sm border border-border-color mb-6 flex flex-col sm:flex-row gap-4 justify-between items-center">
-                    <h1 className="text-xl font-bold text-text-heading">All Products</h1>
-
-                    <div className="flex items-center gap-4 w-full sm:w-auto">
-                        <div className="relative flex-1 sm:w-64">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-                            <input
-                                type="text"
-                                placeholder="Search products..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-9 pr-4 py-2 rounded-lg border border-border-color focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
-                            />
-                        </div>
-
-                        <button className="flex items-center gap-2 text-sm font-medium text-text-muted hover:text-primary whitespace-nowrap">
-                            Sort By: Price <ArrowUpDown className="w-4 h-4" />
-                        </button>
+                    <div className="hidden sm:block">
+                        <span className="text-sm font-medium text-text-muted bg-white px-3 py-1 rounded-full border border-border-color shadow-sm">
+                            Last updated: Just now
+                        </span>
                     </div>
                 </div>
 
-                {/* Product Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredProducts.map(product => (
-                        <Link href={`/user/product/${product.id}`} key={product.id} className="group">
-                            <div className="bg-white rounded-2xl shadow-sm border border-border-color overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                                <div className="aspect-[4/3] bg-slate-100 relative items-center justify-center flex">
-                                    {/* Placeholder for Product Image */}
-                                    <div className="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center text-slate-400">
-                                        IMG
-                                    </div>
-                                </div>
-                                <div className="p-5">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h3 className="font-bold text-text-heading group-hover:text-primary transition-colors line-clamp-1">{product.name}</h3>
-                                        <span className="text-xs font-semibold bg-accent/10 text-accent-dark px-2 py-1 rounded">{product.category}</span>
-                                    </div>
-                                    <p className="text-sm text-text-muted mb-4 line-clamp-2">
-                                        Detailed description for {product.name}. Helps improve workflow and efficiency.
-                                    </p>
-                                    <div className="flex items-center justify-between mt-auto">
-                                        <div>
-                                            <p className="text-lg font-bold text-primary">${product.price}</p>
-                                            <p className="text-xs text-text-muted">/ {product.billing}</p>
-                                        </div>
-                                        <button className="bg-primary text-white p-2 rounded-lg hover:bg-primary-dark transition-colors">
-                                            <span className="text-xs font-bold">View</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </Link>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {KEY_METRICS.map((metric) => (
+                        <KPICard key={metric.title} {...metric} />
                     ))}
+                </div>
+            </section>
+
+            <div className="grid lg:grid-cols-3 gap-8">
+                {/* Main Column: Quick Actions & Activity */}
+                <div className="lg:col-span-2 space-y-8">
+                    {/* Quick Overview / Navigation */}
+                    <section>
+                        <h2 className="text-lg font-bold text-text-heading mb-4">Quick Actions</h2>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            {DASHBOARD_LINKS.map((link) => (
+                                <Link href={link.href} key={link.name} className="group">
+                                    <div className="bg-white p-4 rounded-xl border border-border-color shadow-sm hover:shadow-md transition-all hover:-translate-y-1 flex flex-col items-center justify-center gap-3 h-full min-h-[140px]">
+                                        <div className={`p-3 rounded-full ${link.color} group-hover:scale-110 transition-transform`}>
+                                            <link.icon className="w-6 h-6" />
+                                        </div>
+                                        <span className={`text-sm font-semibold text-center ${link.name === "Browse Shop" ? "text-indigo-600" : "text-text-heading"}`}>{link.name}</span>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Recent Activity */}
+                    <section className="bg-white rounded-2xl border border-border-color shadow-sm p-6">
+                        <h2 className="text-lg font-bold text-text-heading mb-4">Recent Activity</h2>
+                        <div className="space-y-4">
+                            {RECENT_ACTIVITY.map((activity, index) => (
+                                <div key={index} className="flex items-center justify-between p-3 hover:bg-slate-50 rounded-lg transition-colors">
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-2 bg-slate-100 rounded-lg text-slate-600">
+                                            <activity.icon className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold text-text-heading text-sm">{activity.title}</p>
+                                            <p className="text-xs text-text-muted">{activity.date}</p>
+                                        </div>
+                                    </div>
+                                    {activity.amount && (
+                                        <span className="font-bold text-text-heading text-sm">{activity.amount}</span>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                </div>
+
+                {/* Side Column: Upcoming Payments */}
+                <div className="space-y-8">
+                    <section className="bg-white rounded-2xl border border-border-color shadow-sm p-6 h-full">
+                        <h2 className="text-lg font-bold text-text-heading mb-4 flex items-center gap-2">
+                            <AlertCircle className="w-5 h-5 text-orange-500" /> Upcoming Payments
+                        </h2>
+                        <div className="space-y-0 divide-y divide-slate-100">
+                            {UPCOMING_PAYMENTS.map((payment, index) => (
+                                <div key={index} className="py-4 first:pt-0 last:pb-0">
+                                    <div className="flex justify-between items-start mb-1">
+                                        <p className="font-bold text-text-heading text-sm">{payment.name}</p>
+                                        <span className="text-sm font-bold text-primary">{payment.amount}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-xs text-text-muted">
+                                        <span>{payment.date}</span>
+                                        <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">{payment.status}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <button className="w-full mt-6 py-2.5 text-sm font-bold text-primary border border-primary/20 rounded-xl hover:bg-primary/5 transition-colors">
+                            View All Invoices
+                        </button>
+                    </section>
                 </div>
             </div>
         </div>
