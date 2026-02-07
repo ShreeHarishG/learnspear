@@ -16,14 +16,14 @@ export default function InvoiceDetailPage() {
     useEffect(() => {
         if (!id) return;
 
-        // Fetch all invoices and find the one we need (since we enriched the list API)
-        odooAPI.getUserInvoices()
+        // Fetch single invoice
+        odooAPI.getInvoiceById(Number(id))
             .then((res) => {
-                const allInvoices = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []);
-                const found = allInvoices.find((inv: any) => inv.id.toString() === id.toString());
-                
-                if (found) {
-                    setInvoice(found);
+                // Determine structure: { status: "success", data: ... } or just data
+                const invoiceData = res?.data || res;
+
+                if (invoiceData) {
+                    setInvoice(invoiceData);
                 } else {
                     toast.error("Invoice not found.");
                     setTimeout(() => router.push("/user/invoices"), 2000);

@@ -6,10 +6,11 @@ const ODOO_URL = process.env.NEXT_PUBLIC_ODOO_URL || "http://localhost:8069";
 
 async function handler(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  props: { params: Promise<{ path: string[] }> }
 ) {
+  const params = await props.params;
   // 1. Reconstruct the URL (e.g., /api/odoo/stats -> http://localhost:8069/api/stats)
-  const pathArray = (await params).path;
+  const pathArray = params.path;
   const path = pathArray.join("/");
   const queryString = request.nextUrl.search;
   const targetUrl = `${ODOO_URL}/api/${path}${queryString}`;
@@ -17,7 +18,7 @@ async function handler(
   // 2. Prepare headers (Forward cookies for authentication)
   const headers = new Headers();
   headers.set("Content-Type", "application/json");
-  
+
   const cookie = request.headers.get("cookie");
   if (cookie) {
     headers.set("Cookie", cookie);
@@ -30,7 +31,7 @@ async function handler(
       headers: headers,
       body: request.body, // Forward data (for POST/PUT)
       // @ts-ignore
-      duplex: "half", 
+      duplex: "half",
     });
 
     // 4. Handle the response
