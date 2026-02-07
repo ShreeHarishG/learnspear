@@ -3,16 +3,12 @@
 import { useState, useEffect } from "react";
 import { KPICard } from "@/components/KPICard";
 import odooAPI from "@/lib/odoo-api";
+import type { OdooStats, OdooSubscription, OdooInvoice } from "@/lib/odoo-api-types";
 
 export default function AdminDashboardPage() {
-    const [stats, setStats] = useState<{
-        active_subscriptions?: number;
-        total_subscriptions?: number;
-        paid_invoices?: number;
-        total_revenue?: number;
-    } | null>(null);
-    const [subscriptions, setSubscriptions] = useState<Array<{ id: number; name: string; partner_id: [number, string]; plan_id: [number, string]; state: string; amount_total: number }>>([]);
-    const [invoices, setInvoices] = useState<Array<{ id: number; name: string; partner_id: [number, string]; invoice_date: string; payment_state: string; amount_total: number }>>([]);
+    const [stats, setStats] = useState<OdooStats | null>(null);
+    const [subscriptions, setSubscriptions] = useState<OdooSubscription[]>([]);
+    const [invoices, setInvoices] = useState<OdooInvoice[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -25,8 +21,8 @@ export default function AdminDashboardPage() {
                     odooAPI.getInvoices(),
                 ]);
                 setStats(statsRes.data ?? null);
-                setSubscriptions(subsRes.data ?? []);
-                setInvoices(invRes.data ?? []);
+                setSubscriptions(Array.isArray(subsRes.data) ? subsRes.data : []);
+                setInvoices(Array.isArray(invRes.data) ? invRes.data : []);
             } catch (e) {
                 setError(e instanceof Error ? e.message : "Failed to load data");
             } finally {
@@ -78,7 +74,7 @@ export default function AdminDashboardPage() {
                 />
                 <KPICard
                     title="Paid Invoices"
-                    value={stats?.paid_invoices ?? 0}
+                    value={stats?.paid_invoices ?? invoices.filter((i) => i.payment_state === "paid").length}
                     icon="👥"
                 />
             </div>

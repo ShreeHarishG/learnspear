@@ -2,18 +2,17 @@
 
 import { useState, useEffect } from "react";
 import odooAPI from "@/lib/odoo-api";
-
-type Inv = { id: number; name: string; partner_id: [number, string]; invoice_date: string; payment_state: string; amount_total: number };
+import type { OdooInvoice } from "@/lib/odoo-api-types";
 
 export default function AdminPaymentsPage() {
-    const [list, setList] = useState<Inv[]>([]);
+    const [list, setList] = useState<OdooInvoice[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         odooAPI.getInvoices()
             .then((res) => {
-                const all: Inv[] = res.data ?? [];
+                const all: OdooInvoice[] = res.data ?? [];
                 setList(all.filter((i) => i.payment_state === "paid" || i.payment_state === "partial"));
             })
             .catch((e) => setError(e instanceof Error ? e.message : "Failed to load"))

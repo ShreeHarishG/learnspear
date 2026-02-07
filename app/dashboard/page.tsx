@@ -3,36 +3,12 @@
 import { useState, useEffect } from 'react';
 import odooAPI from '@/lib/odoo-api';
 import Link from 'next/link';
-
-interface Stats {
-  active_subscriptions: number;
-  total_subscriptions: number;
-  paid_invoices: number;
-  total_revenue: number;
-}
-
-interface Subscription {
-  id: number;
-  name: string;
-  partner_id: [number, string];
-  plan_id: [number, string];
-  state: string;
-  amount_total: number;
-}
-
-interface Invoice {
-  id: number;
-  name: string;
-  partner_id: [number, string];
-  invoice_date: string;
-  payment_state: string;
-  amount_total: number;
-}
+import type { OdooStats, OdooSubscription, OdooInvoice } from '@/lib/odoo-api-types';
 
 export default function Dashboard() {
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [stats, setStats] = useState<OdooStats | null>(null);
+  const [subscriptions, setSubscriptions] = useState<OdooSubscription[]>([]);
+  const [invoices, setInvoices] = useState<OdooInvoice[]>([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     loadData();
@@ -46,9 +22,9 @@ export default function Dashboard() {
         odooAPI.getInvoices(),
       ]);
 
-      setStats(statsData.data);
-      setSubscriptions(subsData.data);
-      setInvoices(invoicesData.data);
+      setStats(statsData.data ?? null);
+      setSubscriptions(Array.isArray(subsData.data) ? subsData.data : []);
+      setInvoices(Array.isArray(invoicesData.data) ? invoicesData.data : []);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -107,21 +83,21 @@ export default function Dashboard() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="text-sm text-gray-600">Total Subscriptions</div>
             <div className="text-3xl font-bold text-green-600 mt-2">
-              {stats?.total_subscriptions || 0}
+              {stats?.total_subscriptions ?? subscriptions.length}
             </div>
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
             <div className="text-sm text-gray-600">Paid Invoices</div>
             <div className="text-3xl font-bold text-purple-600 mt-2">
-              {stats?.paid_invoices || 0}
+              {stats?.paid_invoices ?? invoices.filter((i) => i.payment_state === "paid").length}
             </div>
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
             <div className="text-sm text-gray-600">Total Revenue</div>
             <div className="text-3xl font-bold text-orange-600 mt-2">
-              ${stats?.total_revenue?.toFixed(2) || '0.00'}
+              ₹{(stats?.total_revenue ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
             </div>
           </div>
         </div>
@@ -174,7 +150,7 @@ export default function Dashboard() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      ${sub.amount_total.toFixed(2)}
+                      ₹{Number(sub.amount_total).toFixed(2)}
                     </td>
                   </tr>
                 ))}
@@ -231,7 +207,7 @@ export default function Dashboard() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      ${invoice.amount_total.toFixed(2)}
+                      ₹{Number(invoice.amount_total).toFixed(2)}
                     </td>
                   </tr>
                 ))}

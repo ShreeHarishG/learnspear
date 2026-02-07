@@ -1,58 +1,79 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import odooAPI from "@/lib/odoo-api";
-
-type Sub = { id: number; name: string; partner_id: [number, string]; plan_id: [number, string]; state: string; amount_total: number };
+import type { OdooSubscription } from "@/lib/odoo-api-types";
 
 export default function UserSubscriptionsPage() {
-    const [list, setList] = useState<Sub[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+  const [list, setList] = useState<OdooSubscription[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        odooAPI.getSubscriptions()
-            .then((res) => setList(res.data ?? []))
-            .catch((e) => setError(e instanceof Error ? e.message : "Failed to load"))
-            .finally(() => setLoading(false));
-    }, []);
+  useEffect(() => {
+    let alive = true;
 
-    if (loading) return <div className="p-8 text-text-muted">Loading subscriptions...</div>;
-    if (error) return <div className="p-8 text-red-600">Error: {error}</div>;
+    (async () => {
+      try {
+        const data = await odooAPI.getSubscriptions();
 
-    return (
-        <div className="p-8">
-            <h1 className="text-2xl font-bold text-text-heading">My Subscriptions</h1>
-            <p className="mt-2 text-text-muted">View details of your active and past subscriptions (from Odoo).</p>
-            <div className="mt-6 overflow-x-auto rounded-xl border border-border-color bg-white shadow-sm">
-                <table className="w-full text-left text-sm">
-                    <thead className="border-b border-border-color bg-gray-50/80">
-                        <tr>
-                            <th className="px-4 py-3 font-medium text-text-heading">#</th>
-                            <th className="px-4 py-3 font-medium text-text-heading">Customer</th>
-                            <th className="px-4 py-3 font-medium text-text-heading">Plan</th>
-                            <th className="px-4 py-3 font-medium text-text-heading">Status</th>
-                            <th className="px-4 py-3 font-medium text-text-heading">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border-color">
-                        {list.map((sub) => (
-                            <tr key={sub.id} className="hover:bg-slate-50/50">
-                                <td className="px-4 py-3 font-medium">{sub.name}</td>
-                                <td className="px-4 py-3">{sub.partner_id?.[1] ?? "-"}</td>
-                                <td className="px-4 py-3">{sub.plan_id?.[1] ?? "-"}</td>
-                                <td className="px-4 py-3">
-                                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${sub.state === "active" ? "bg-green-100 text-green-800" : sub.state === "draft" ? "bg-gray-100 text-gray-700" : "bg-red-100 text-red-800"}`}>
-                                        {sub.state}
-                                    </span>
-                                </td>
-                                <td className="px-4 py-3">₹{Number(sub.amount_total).toFixed(2)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                {list.length === 0 && <p className="p-6 text-text-muted">No subscriptions found.</p>}
-            </div>
-        </div>
-    );
+        if (alive && Array.isArray(data)) {
+          setList(data);
+        }
+      } catch (e) {
+        if (alive) {
+          setError("Failed to load subscriptions");
+        }
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  if (loading) {
+    return <div className="p-8 text-text-muted">Loading subscriptions...</div>;
+  }
+
+  if (error) {
+    return <div className="p-8 text-red-600">{error}</div>;
+  }
+
+  return (
+    <div className="p-8">
+      <h1 className="text-2xl font-bold">My Subscriptions</h1>
+
+      <div className="mt-6 overflow-x-auto rounded-xl border bg-white shadow-sm">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 border-b">
+            <tr>
+              <th className="px-4 py-3 text-left">Subscription</th>
+              <th className="px-4 py-3 text-left">Customer</th>
+              <th className="px-4 py-3 text-left">Plan</th>
+              <th className="px-4 py-3 text-left">Status</th>
+              <th className="px-4 py-3 text-left">Amount</th>
+            </tr>
+          </thead>
+
+          <tbody className="divide-y">
+            {list.map((sub) => (
+              <tr key={sub.id}>
+                <td className="px-4 py-3">{sub.name}</td>
+                <td className="px-4 py-3">{sub.partner_id?.[1] ?? "-"}</td>
+                <td className="px-4 py-3">{sub.plan_id?.[1] ?? "-"}</td>
+                <td className="px-4 py-3">{sub.state}</td>
+                <td className="px-4 py-3">₹{sub.amount_total}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {list.length === 0 && (
+          <p className="p-6 text-gray-500">No subscriptions found.</p>
+        )}
+      </div>
+    </div>
+  );
 }
