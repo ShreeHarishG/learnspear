@@ -11,6 +11,9 @@ export default function UserSubscriptionsPage() {
 
   useEffect(() => {
     let alive = true;
+    useEffect(() => {
+        setList([]);
+    }, []);
 
     (async () => {
       try {
