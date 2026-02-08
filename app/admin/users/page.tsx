@@ -5,6 +5,7 @@ import odooAPI from "@/lib/odoo-api";
 import { toast } from "sonner";
 import { useOdooPolling } from "@/lib/hooks/useOdooPolling";
 import type { OdooCustomer } from "@/lib/odoo-api-types";
+import { Trash2 } from "lucide-react";
 
 export default function AdminUsersPage() {
   // ================= STATE =================
@@ -31,6 +32,19 @@ export default function AdminUsersPage() {
     } finally {
       setInviting(false);
     }
+  };
+
+  const handleDelete = async (id: number) => {
+      if (!confirm("Are you sure you want to delete this user?")) return;
+      
+      try {
+          await odooAPI.deleteCustomer(id);
+          toast.success("User deleted successfully");
+          window.location.reload(); 
+      } catch (err: any) {
+          console.error(err);
+          toast.error(err.message || "Failed to delete user");
+      }
   };
 
   // ================= RENDER =================
@@ -109,6 +123,7 @@ export default function AdminUsersPage() {
                     <th className="px-6 py-3 font-semibold text-slate-900">Name</th>
                     <th className="px-6 py-3 font-semibold text-slate-900">Contact</th>
                     <th className="px-6 py-3 font-semibold text-slate-900">Email</th>
+                    <th className="px-6 py-3 text-right"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -124,7 +139,16 @@ export default function AdminUsersPage() {
                         {c.phone || "—"}
                       </td>
                       <td className="px-6 py-3 text-slate-500">
-                         {c.email || "—"}
+                        {c.email || "—"}
+                      </td>
+                      <td className="px-6 py-3 text-right">
+                          <button 
+                              onClick={() => handleDelete(c.id)}
+                              className="text-slate-400 hover:text-red-600 p-2 rounded-md hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"
+                              title="Delete User"
+                          >
+                              <Trash2 className="h-4 w-4" />
+                          </button>
                       </td>
                     </tr>
                   ))}

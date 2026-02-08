@@ -3,7 +3,8 @@
 import { useOdooPolling } from "@/lib/hooks/useOdooPolling";
 import odooAPI from "@/lib/odoo-api";
 import type { OdooProduct } from "@/lib/odoo-api-types";
-import { Plus, Search, Filter, MoreHorizontal, Package, Tag, ArrowUpDown } from "lucide-react";
+import { Plus, Search, Filter, MoreHorizontal, Package, Tag, ArrowUpDown, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { useState } from "react";
 
 export default function AdminProductsPage() {
@@ -13,6 +14,22 @@ export default function AdminProductsPage() {
   const filteredList = list?.filter(p => 
     p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this product?")) return;
+    
+    try {
+        await odooAPI.deleteProduct(id);
+        toast.success("Product deleted successfully");
+        // Optimistic update or refetch would be ideal, but for now relying on polling hook might be enough or we could manually mutate
+        // existing list if we had access to setList, but useOdooPolling manages state.
+        // For simplicity, we just toast. The polling should pick it up eventually, or we reload.
+        window.location.reload(); 
+    } catch (err: any) {
+        console.error(err);
+        toast.error(err.message || "Failed to delete product");
+    }
+  };
 
   if (loading && !list) {
       return (
@@ -141,8 +158,12 @@ export default function AdminProductsPage() {
                           </span>
                       </td>
                       <td className="px-6 py-3 text-right">
-                          <button className="text-slate-400 hover:text-slate-600 p-1 rounded-md hover:bg-slate-100 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <MoreHorizontal className="h-4 w-4" />
+                          <button 
+                              onClick={() => handleDelete(product.id)}
+                              className="text-slate-400 hover:text-red-600 p-1 rounded-md hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
+                              title="Delete Product"
+                          >
+                              <Trash2 className="h-4 w-4" />
                           </button>
                       </td>
                     </tr>

@@ -56,3 +56,27 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
+// DELETE /api/odoo/products - Delete a product
+export async function DELETE(request: NextRequest) {
+    try {
+        const cookie = request.headers.get("cookie");
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get("id");
+
+        if (!id) {
+            return NextResponse.json({ error: "Product ID is required" }, { status: 400 });
+        }
+
+        const result = await odooCall("call", {
+            model: "product.template",
+            method: "unlink",
+            args: [[Number(id)]],
+            kwargs: {},
+        }, cookie || undefined);
+
+        return NextResponse.json({ success: true, result });
+    } catch (error: any) {
+        console.error("Delete Product Error:", error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}

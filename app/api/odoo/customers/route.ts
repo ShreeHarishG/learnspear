@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { odooSearchRead } from "@/lib/odoo-server";
+import { odooSearchRead, odooCall } from "@/lib/odoo-server";
 
 // GET /api/odoo/customers
 export async function GET(request: NextRequest) {
@@ -19,6 +19,30 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ status: "success", data: customers });
     } catch (error: any) {
         console.error("Customers API Error:", error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+// DELETE /api/odoo/customers - Delete a customer
+export async function DELETE(request: NextRequest) {
+    try {
+        const cookie = request.headers.get("cookie");
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get("id");
+
+        if (!id) {
+            return NextResponse.json({ error: "Customer ID is required" }, { status: 400 });
+        }
+
+        const result = await odooCall("call", {
+            model: "res.partner",
+            method: "unlink",
+            args: [[Number(id)]],
+            kwargs: {},
+        }, cookie || undefined);
+
+        return NextResponse.json({ success: true, result });
+    } catch (error: any) {
+        console.error("Delete Customer Error:", error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
