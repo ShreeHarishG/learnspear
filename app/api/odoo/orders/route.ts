@@ -1,7 +1,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
-import { odooFetch } from "@/lib/odoo-server";
+import { odooCall, odooFetch } from "@/lib/odoo-server";
 
+// GET /api/odoo/orders
 // GET /api/odoo/orders
 export async function GET(request: NextRequest) {
     try {
@@ -10,17 +11,33 @@ export async function GET(request: NextRequest) {
         const partnerId = searchParams.get("partner_id");
         const state = searchParams.get("state");
 
-        let endpoint = "/api/orders";
-        const params = [];
-        if (partnerId) params.push(`partner_id=${partnerId}`);
-        if (state) params.push(`state=${state}`);
-        if (params.length > 0) endpoint += "?" + params.join("&");
+        // Domain construction
+        const domain: any[] = [];
+        if (state) {
+            domain.push(["state", "=", state]);
+        } else {
+            // Default to sale orders if no state specified, or all? 
+            // Let's default to not cancelled
+            domain.push(["state", "!=", "cancel"]);
+        }
 
-        const data = await odooFetch(endpoint, "GET", undefined, cookie || undefined);
-        return NextResponse.json({ status: "success", data: data });
+        if (partnerId) {
+            domain.push(["partner_id", "=", parseInt(partnerId)]);
+        }
+
+        const fields = ["id", "name", "date_order", "amount_total", "state", "partner_id"];
+
+        const orders = await odooCall("call", {
+            model: "sale.order",
+            method: "search_read",
+            args: [domain, fields],
+            kwargs: { limit: 100, order: "date_order desc" },
+        }, cookie || undefined);
+
+        return NextResponse.json({ status: "success", data: orders });
     } catch (error: any) {
         console.error("Orders API Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: error.message }, { status: error.status || 500 });
     }
 }
 

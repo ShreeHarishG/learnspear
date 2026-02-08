@@ -3,14 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { odooFetch } from "@/lib/odoo-server";
 
 // GET /api/odoo/plans
+// GET /api/odoo/plans
 export async function GET(request: NextRequest) {
-    try {
-        const cookie = request.headers.get("cookie");
-        // Proxy to custom backend endpoint
-        const data = await odooFetch("/api/plans", "GET", undefined, cookie || undefined);
-        return NextResponse.json({ status: "success", data: data });
-    } catch (error: any) {
-        console.error("Plans API Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    // Mock Plans for now as Odoo Community doesn't have subscription plans by default
+    const mockPlans = [
+        { id: 1, name: "Basic Plan", billing_period: "month", price: 999 },
+        { id: 2, name: "Pro Plan", billing_period: "month", price: 1999 },
+        { id: 3, name: "Enterprise Plan", billing_period: "year", price: 19999 },
+    ];
+    return NextResponse.json({ status: "success", data: mockPlans });
 }

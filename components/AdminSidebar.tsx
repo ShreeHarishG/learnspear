@@ -9,14 +9,14 @@ const navigation = [
     { name: "Products", href: "/admin/products", icon: Package },
     { name: "Subscriptions", href: "/admin/subscriptions", icon: RefreshCw },
     { name: "Invoices", href: "/admin/invoices", icon: FileText },
-    // { name: "Quotations", href: "/admin/quotations", icon: Files },
-    // { name: "Users", href: "/admin/users", icon: Users },
-    // { name: "Plans", href: "/admin/plans", icon: Layers }, // Changed icon
-    // { name: "Payments", href: "/admin/payments", icon: CreditCard },
-    // { name: "Discounts", href: "/admin/discounts", icon: Percent },
-    // { name: "Taxes", href: "/admin/taxes", icon: Scale },
-    // { name: "Reports", href: "/admin/reports", icon: BarChart3 },
-    // { name: "Settings", href: "/admin/settings", icon: Settings },
+     { name: "Quotations", href: "/admin/quotations", icon: Files },
+     { name: "Users", href: "/admin/users", icon: Users },
+     { name: "Plans", href: "/admin/plans", icon: Layers }, // Changed icon
+    //  { name: "Payments", href: "/admin/payments", icon: CreditCard },
+    { name: "Discounts", href: "/admin/discounts", icon: Percent },
+    { name: "Taxes", href: "/admin/taxes", icon: Scale },
+    { name: "Reports", href: "/admin/reports", icon: BarChart3 },
+    { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
 export function AdminSidebar() {

@@ -3,14 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { odooFetch } from "@/lib/odoo-server";
 
 // GET /api/odoo/discounts
+// GET /api/odoo/discounts
 export async function GET(request: NextRequest) {
-    try {
-        const cookie = request.headers.get("cookie");
-        // Proxy to custom backend endpoint
-        const data = await odooFetch("/api/discounts", "GET", undefined, cookie || undefined);
-        return NextResponse.json({ status: "success", data: data });
-    } catch (error: any) {
-        console.error("Discounts API Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    // Mock Discounts
+    const mockDiscounts = [
+        { id: 1, name: "Welcome Offer", percentage: 10, code: "WELCOME10" },
+        { id: 2, name: "Summer Sale", percentage: 20, code: "SUMMER20" },
+    ];
+    return NextResponse.json({ status: "success", data: mockDiscounts });
 }
