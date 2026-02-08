@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { odooSearchRead, odooCall } from "@/lib/odoo-server";
+import { odooCall, odooFetch } from "@/lib/odoo-server";
 
 // GET /api/odoo/customers
 export async function GET(request: NextRequest) {
@@ -7,19 +7,20 @@ export async function GET(request: NextRequest) {
         const cookie = request.headers.get("cookie");
         const { searchParams } = new URL(request.url);
 
-        // Basic filtering if needed
-        const domain = [["customer_rank", ">", 0]]; // Standard Odoo domain for customers
-        const fields = ["id", "name", "email", "phone", "image_128", "street", "city", "country_id"];
+        // Define search payload for the custom generic search endpoint
+        const payload = {
+            model: "res.partner",
+            domain: [["customer_rank", ">", 0]],
+            fields: ["id", "name", "email", "phone", "image_128", "street", "city", "country_id"]
+        };
 
-        const limit = Number(searchParams.get("limit")) || 100;
-        const offset = Number(searchParams.get("offset")) || 0;
+        // Use custom generic search endpoint
+        const data = await odooFetch("/api/odoo/search", "POST", payload, cookie || undefined);
 
-        const customers = await odooSearchRead("res.partner", domain, fields, limit, offset, cookie || undefined);
-
-        return NextResponse.json({ status: "success", data: customers });
+        return NextResponse.json({ status: "success", data: data });
     } catch (error: any) {
         console.error("Customers API Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: error.message }, { status: error.status || 500 });
     }
 }
 // DELETE /api/odoo/customers - Delete a customer
@@ -43,6 +44,6 @@ export async function DELETE(request: NextRequest) {
         return NextResponse.json({ success: true, result });
     } catch (error: any) {
         console.error("Delete Customer Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: error.message }, { status: error.status || 500 });
     }
 }

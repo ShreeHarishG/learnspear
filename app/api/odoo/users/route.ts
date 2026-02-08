@@ -1,27 +1,22 @@
-
 import { NextRequest, NextResponse } from "next/server";
-import { odooCall } from "@/lib/odoo-server";
+import { odooCall, odooFetch } from "@/lib/odoo-server";
 
-// GET /api/odoo/users -> In Odoo terms, we usually mean Customers (res.partner) or System Users (res.users)
-// Based on typical Admin needs, let's fetch Customers (res.partner)
+// GET /api/odoo/users
 export async function GET(request: NextRequest) {
     try {
         const cookie = request.headers.get("cookie");
+        // Proxy to custom backend endpoint
+        const data = await odooFetch("/api/users", "GET", undefined, cookie || undefined);
 
-        // Search for Partners who are customers
-        const domain = [["customer_rank", ">", 0]]; // Standard Odoo way to find customers
-        const fields = ["id", "name", "email", "phone", "image_1920"];
+        // Map 'login' to 'email' as frontend expects 'email'
+        const mapped = Array.isArray(data) ? data.map((u: any) => ({
+            ...u,
+            email: u.login || u.email
+        })) : data;
 
-        const customers = await odooCall("call", {
-            model: "res.partner",
-            method: "search_read",
-            args: [domain, fields],
-            kwargs: { limit: 100 }, // Limit to 100 for now
-        }, cookie || undefined);
-
-        return NextResponse.json({ status: "success", data: customers });
+        return NextResponse.json({ status: "success", data: mapped });
     } catch (error: any) {
         console.error("Users API Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: error.message }, { status: error.status || 500 });
     }
 }

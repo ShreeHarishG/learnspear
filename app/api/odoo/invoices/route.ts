@@ -65,6 +65,6 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ status: "success", data: invoices });
     } catch (error: any) {
         console.error("Invoices API Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: error.message }, { status: error.status || 500 });
     }
 }

@@ -1,6 +1,5 @@
-
 import { NextRequest, NextResponse } from "next/server";
-import { odooCall, odooSearchRead } from "@/lib/odoo-server";
+import { odooCall, odooSearchRead, odooFetch } from "@/lib/odoo-server";
 
 // GET /api/odoo/products
 export async function GET(request: NextRequest) {
@@ -18,7 +17,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ status: "success", data: products });
     } catch (error: any) {
         console.error("Products API Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: error.message }, { status: error.status || 500 });
     }
 }
 
@@ -33,27 +32,20 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Product name is required" }, { status: 400 });
         }
 
-        // Prepare Odoo creation payload
-        const productData = {
+        // Custom backend expects: { name, price, type? }
+        const payload = {
             name: body.name,
-            list_price: body.list_price || 0,
-            sale_ok: true,
-            detailed_type: 'service', // Default to service/subscription type for this SaaS
-            // Add more fields as needed
+            price: body.list_price || body.price || 0,
+            type: body.detailed_type || 'service'
         };
 
-        const newProductId = await odooCall("call", {
-            model: "product.template",
-            method: "create",
-            args: [productData],
-            kwargs: {},
-        }, cookie || undefined);
-
-        return NextResponse.json({ id: newProductId, ...productData, status: "success" });
+        // Proxy to custom backend
+        const result = await odooFetch("/api/products", "POST", payload, cookie || undefined);
+        return NextResponse.json(result);
 
     } catch (error: any) {
         console.error("Create Product Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: error.message }, { status: error.status || 500 });
     }
 }
 // DELETE /api/odoo/products - Delete a product
@@ -77,6 +69,6 @@ export async function DELETE(request: NextRequest) {
         return NextResponse.json({ success: true, result });
     } catch (error: any) {
         console.error("Delete Product Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: error.message }, { status: error.status || 500 });
     }
 }
