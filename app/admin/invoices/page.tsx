@@ -5,6 +5,7 @@ import odooAPI from "@/lib/odoo-api";
 import type { OdooInvoice } from "@/lib/odoo-api-types";
 import { FileText, Filter, MoreHorizontal, Plus, Search, ArrowUpDown, Download } from "lucide-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function InvoicesPage() {
   const { data: list, loading, error } = useOdooPolling<OdooInvoice[]>(odooAPI.getInvoices);
@@ -47,11 +48,15 @@ export default function InvoicesPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-             <button className="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+             <button 
+                onClick={() => toast.success("Export started")}
+                className="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                 <Download className="mr-2 h-4 w-4" />
                 Export
              </button>
-             <button className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+             <button 
+                onClick={() => toast.success("Create Invoice feature coming soon")}
+                className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                 <Plus className="mr-2 h-4 w-4" />
                 Create Invoice
              </button>

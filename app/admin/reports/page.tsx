@@ -4,9 +4,40 @@ import { useOdooPolling } from "@/lib/hooks/useOdooPolling";
 import odooAPI from "@/lib/odoo-api";
 import type { OdooStats } from "@/lib/odoo-api-types";
 import { Download } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function AdminReportsPage() {
     const { data: stats } = useOdooPolling<OdooStats>(odooAPI.getStats);
+
+    const handleExport = () => {
+        if (!stats) return;
+
+        const headers = ["Metric", "Value"];
+        const rows = [
+            ["Total Revenue", stats.total_revenue || 0],
+            ["Active Subscriptions", stats.active_subscriptions || 0],
+            ["Total Subscriptions", stats.total_subscriptions || 0],
+            ["Paid Invoices", stats.paid_invoices || 0]
+        ];
+
+        const csvContent = [
+            headers.join(","),
+            ...rows.map(row => row.join(","))
+        ].join("\n");
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `odoo_report_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            toast.success("Reports exported successfully");
+        }
+    };
 
     return (
         <div className="flex flex-col h-full bg-white">
@@ -20,7 +51,10 @@ export default function AdminReportsPage() {
                       <span className="text-slate-900">Reports</span>
                   </nav>
                 </div>
-                 <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-md text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm">
+                 <button 
+                    onClick={handleExport}
+                    className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-md text-sm font-medium hover:bg-slate-50 transition-colors shadow-sm"
+                 >
                     <Download className="w-4 h-4" />
                     <span>Export</span>
                  </button>

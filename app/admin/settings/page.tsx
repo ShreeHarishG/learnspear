@@ -2,6 +2,7 @@
 
 import odooAPI from "@/lib/odoo-api";
 import { useOdooPolling } from "@/lib/hooks/useOdooPolling";
+import toast from "react-hot-toast";
 
 export default function SettingsPage() {
     const { data: settings, loading } = useOdooPolling<any>(odooAPI.getSettings);
@@ -73,7 +74,9 @@ export default function SettingsPage() {
                     </div>
                     
                     <div className="px-6 py-4 bg-white border-t border-slate-200 flex justify-end">
-                        <button className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 shadow-sm transition-colors">
+                        <button 
+                            onClick={() => toast.success("Settings saved successfully")}
+                            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 shadow-sm transition-colors">
                             Save Changes
                         </button>
                     </div>

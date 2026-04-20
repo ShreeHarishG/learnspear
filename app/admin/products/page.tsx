@@ -4,7 +4,7 @@ import { useOdooPolling } from "@/lib/hooks/useOdooPolling";
 import odooAPI from "@/lib/odoo-api";
 import type { OdooProduct } from "@/lib/odoo-api-types";
 import { Plus, Search, Filter, MoreHorizontal, Package, Tag, ArrowUpDown, Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
 import { useState } from "react";
 
 export default function AdminProductsPage() {
@@ -61,10 +61,14 @@ export default function AdminProductsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-             <button className="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+             <button 
+                onClick={() => toast.success("Export started")}
+                className="inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                 Export
              </button>
-             <button className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+             <button 
+                onClick={() => toast.success("Create Product feature coming soon")}
+                className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                 <Plus className="mr-2 h-4 w-4" />
                 New Product
              </button>

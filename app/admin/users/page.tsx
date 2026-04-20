@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import odooAPI from "@/lib/odoo-api";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
 import { useOdooPolling } from "@/lib/hooks/useOdooPolling";
 import type { OdooCustomer } from "@/lib/odoo-api-types";
 import { Trash2 } from "lucide-react";

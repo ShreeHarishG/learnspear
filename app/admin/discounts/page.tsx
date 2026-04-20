@@ -3,6 +3,7 @@
 import odooAPI from "@/lib/odoo-api";
 import { useOdooPolling } from "@/lib/hooks/useOdooPolling";
 import { Plus } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function AdminDiscountsPage() {
     const { data: discounts, loading, error } = useOdooPolling<any[]>(odooAPI.getDiscounts);
@@ -19,7 +20,9 @@ export default function AdminDiscountsPage() {
                       <span className="text-slate-900">Discounts</span>
                   </nav>
                 </div>
-                 <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm">
+                 <button 
+                    onClick={() => toast.success("New Discount feature coming soon")}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm">
                     <Plus className="w-4 h-4" />
                     <span>New</span>
                  </button>

@@ -3,6 +3,7 @@
 import odooAPI from "@/lib/odoo-api";
 import { useOdooPolling } from "@/lib/hooks/useOdooPolling";
 import { Plus } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function AdminTaxesPage() {
     const { data: taxes, loading, error } = useOdooPolling<any[]>(odooAPI.getTaxes);
@@ -19,7 +20,9 @@ export default function AdminTaxesPage() {
                       <span className="text-slate-900">Taxes</span>
                   </nav>
                 </div>
-                 <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm">
+                 <button 
+                    onClick={() => toast.success("New Tax feature coming soon")}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm">
                     <Plus className="w-4 h-4" />
                     <span>New</span>
                  </button>

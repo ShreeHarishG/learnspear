@@ -4,6 +4,7 @@ import odooAPI from "@/lib/odoo-api";
 import { useOdooPolling } from "@/lib/hooks/useOdooPolling";
 import type { OdooPlan } from "@/lib/odoo-api-types";
 import { Plus } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function AdminPlansPage() {
   const { data: list, loading, error } = useOdooPolling<OdooPlan[]>(odooAPI.getPlans);
@@ -20,7 +21,9 @@ export default function AdminPlansPage() {
                   <span className="text-slate-900">Plans</span>
               </nav>
             </div>
-             <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm">
+             <button 
+                onClick={() => toast.success("New Plan feature coming soon")}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm">
                 <Plus className="w-4 h-4" />
                 <span>New</span>
              </button>
